@@ -1,0 +1,92 @@
+@startuml AuctionSystem
+
+class User {
+  + id: Integer
+  + username: String
+  + email: String
+  + password: String
+  + lots: List<Lot>
+  + bids: List<Bid>
+}
+
+class Lot {
+  + id: Integer
+  + name: String
+  + description: Text
+  + start_price: Float
+  + current_price: Float
+  + is_active: Boolean
+  + is_closed: Boolean
+  + is_published: Boolean
+  + created_at: DateTime
+  + closed_at: DateTime
+  + end_time: DateTime
+  + image_path: String
+  + bids: List<Bid>
+}
+
+class Bid {
+  + id: Integer
+  + amount: Float
+  + created_at: DateTime
+  + user: User
+  + lot: Lot
+}
+
+User "1" *-- "0..*" Lot : owns
+User "1" *-- "0..*" Bid : places
+Lot "1" *-- "0..*" Bid : has
+
+class FlaskApp {
+  + __init__()
+  + config
+  + db: SQLAlchemy
+  + secret_key
+}
+
+class Routes {
+  + / : index()
+  + /lot/<int:lot_id> : lot()
+  + /register : register()
+  + /login : login()
+  + /logout : logout()
+  + /create_lot : create_lot()
+  + /my_lots : my_lots()
+  + /close_lot/<int:lot_id> : close_lot()
+  + /start_auction/<int:lot_id> : start_auction()
+  + /edit_lot/<int:lot_id> : edit_lot()
+  + /completed_lots : completed_lots()
+}
+
+class Helpers {
+  + local_time(utc_time, timezone): DateTime
+  + check_winner(lot_id): void
+  + inject_local_time(): dict
+}
+
+class Commands {
+  + db.create_all()
+}
+
+FlaskApp --> User : manages
+FlaskApp --> Lot : manages
+FlaskApp --> Bid : manages
+FlaskApp ..> Routes : uses
+FlaskApp ..> Helpers : includes
+Commands ..> FlaskApp : initializes
+
+note top of FlaskApp
+  Конфигурация:
+  - SQLALCHEMY_DATABASE_URI
+  - UPLOAD_FOLDER
+  - SECRET_KEY
+end note
+
+note right of Helpers
+  Вспомогательные функции:
+  - local_time: конвертация времени
+  - check_winner: проверка победителя
+  - inject_local_time: для шаблонов
+end note
+
+@enduml

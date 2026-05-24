@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Completed Lots</h2>
+    <form method="GET" action="{{ url_for('completed_lots') }}" class="search-form">
+        <input type="text" name="search" placeholder="Search by name or description" value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn-search">Search</button>
+    </form>
+    <div class="lots-container">
+        {% for lot in completed_lots %}
+            <div class="lot-box">
+                {% if lot.image_path %}
+                    <img src="{{ url_for('static', filename=lot.image_path) }}" alt="{{ lot.name }}" class="lot-image">
+                {% else %}
+                    <div class="no-image">No Image</div>
+                {% endif %}
+                <h3>{{ lot.name }}</h3>
+                <p><strong>Final Price:</strong> ${{ lot.current_price }}</p>
+                <p><strong>Closed At:</strong> {{ local_time(lot.closed_at).strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Winner:</strong> {% if lot.bids %}{{ lot.bids[-1].user.username }}{% else %}No bids{% endif %}</p>
+                <p><strong>Status:</strong> {% if lot.is_closed %}Closed by owner{% else %}Completed{% endif %}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('index') }}" class="btn-back">Back to Home</a>
+{% endblock %}

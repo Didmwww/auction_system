@@ -1,0 +1,50 @@
+@startuml AuthComponents
+
+component "Auth Controller" as AuthController {
+    [Registration Form]
+    [Login Form]
+    [Logout Handler]
+}
+
+component "User Model" as UserModel {
+    [User Entity]
+    [Password Storage]
+}
+
+component "Session Manager" as Session {
+    [Session Storage]
+    [Authentication Middleware]
+}
+
+database "Database" as DB {
+    [Users Table]
+}
+
+[Registration Form] --> [User Entity] : "Створює\n(username, email, password)"
+[Login Form] --> [User Entity] : "Перевіряє\ncredentials"
+[User Entity] --> [Users Table] : "Зберігає/завантажує"
+[Login Form] --> [Session Storage] : "Створює сесію"
+[Logout Handler] --> [Session Storage] : "Видаляє сесію"
+[Authentication Middleware] --> [Session Storage] : "Перевіряє авторизацію"
+
+note right of [User Entity]
+    **Валідація:**
+    - Унікальний username/email
+    - Обов'язкові поля
+end note
+
+note left of [Session Storage]
+    **Зберігає:**
+    - user_id
+    - username
+    - timestamp
+end note
+
+note bottom of AuthController
+    **Маршрути:**
+    - /register (GET/POST)
+    - /login (GET/POST)
+    - /logout
+end note
+
+@enduml

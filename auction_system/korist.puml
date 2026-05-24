@@ -1,0 +1,79 @@
+@startuml UI_Components
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+
+package "User Interface" {
+    component "Home Page" as home {
+        [Lot Listings]
+        [Search]
+        [Filters]
+    }
+
+    component "Lot Details Page" as lot {
+        [Lot Information]
+        [Bid Form]
+        [Bid History]
+    }
+
+    component "Authentication" as auth {
+        [Registration Form]
+        [Login Form]
+        [User Dashboard]
+    }
+
+    component "Lot Management" as management {
+        [Create Lot Form]
+        [Edit Lot Form]
+        [My Lots View]
+    }
+
+    component "Completed Lots" as admin {
+        [Completed Auctions]
+        [User Management]
+    }
+}
+
+
+home --> lot : "View Lot Details"
+auth --> home : "Successful Login"
+management --> home : "After Lot Creation"
+management --> lot : "Edit Existing Lot"
+admin --> lot : "Moderate Content"
+
+
+note top of home
+    **Home Page Components:**
+    - Active lot cards
+    - Search functionality
+    - Category filters
+    - Pagination controls
+end note
+
+note right of lot
+    **Lot Page Features:**
+    - Detailed lot information
+    - Image gallery
+    - Bid placement form
+    - Countdown timer
+    - Bid history table
+end note
+
+note bottom of auth
+    **Authentication Flows:**
+    - Registration (username, email, password)
+    - Login (credentials)
+    - Session management
+    - Flash messages
+end note
+
+note left of management
+    **Lot Management:**
+    - Form validation
+    - Image upload
+    - Price input
+    - Draft vs published states
+end note
+
+@enduml

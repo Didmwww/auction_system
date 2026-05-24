@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>My Lots</h2>
+    <div class="lots-container">
+        {% for lot in lots %}
+            <div class="lot-box">
+                {% if lot.image_path %}
+                <img src="{{ url_for('static', filename=lot.image_path) }}" alt="{{ lot.name }}" class="lot-image">
+                {% else %}
+                    <div class="no-image">No Image</div>
+                {% endif %}
+                <h3>{{ lot.name }}</h3>
+                <p><strong>Current Price:</strong> ${{ lot.current_price }}</p>
+                <p><strong>Created At:</strong> {{ local_time(lot.created_at).strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Status:</strong> 
+                    {% if lot.is_published %}
+                        Published
+                    {% else %}
+                        Draft
+                    {% endif %}
+                </p>
+                <a href="{{ url_for('lot', lot_id=lot.id) }}" class="btn-open-lot">Open Lot</a>
+                {% if not lot.is_published %}
+                    <form method="POST" action="{{ url_for('start_auction', lot_id=lot.id) }}" style="margin-top: 10px;">
+                        <button type="submit" class="btn-start-auction">Start Auction</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('index') }}" class="btn-back">Back to Home</a>
+{% endblock %}

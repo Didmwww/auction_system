@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="auth-container">
+        <h2>Create New Lot</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="start_price">Start Price:</label>
+                <input type="number" id="start_price" name="start_price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            <button type="submit" class="btn-auth">Create Lot</button>
+        </form>
+        <p class="auth-link"><a href="{{ url_for('index') }}">Back to Home</a></p>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="lot-details">
+        <h2>{{ lot.name }}</h2>
+        {% if lot.image_path %}
+        <img src="{{ url_for('static', filename=lot.image_path) }}" alt="{{ lot.name }}" class="lot-image">
+        {% else %}
+            <div class="no-image">No Image</div>
+        {% endif %}
+        <p><strong>Description:</strong> {{ lot.description }}</p>
+        <p><strong>Current Price:</strong> ${{ lot.current_price }}</p>
+        <p><strong>Created At:</strong> {{ local_time(lot.created_at).strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <p><strong>End Time:</strong> {{ local_time(lot.end_time).strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <p><strong>Owner:</strong> {{ lot.owner.username }}</p>
+        {% if 'user_id' in session and session['user_id'] == lot.owner_id %}
+            <div class="owner-actions">
+                <a href="{{ url_for('edit_lot', lot_id=lot.id) }}" class="btn-edit">Edit Lot</a>
+                <a href="{{ url_for('close_lot', lot_id=lot.id) }}" class="btn-close">Close Lot</a>
+            </div>
+            <p class="owner-message">You cannot place a bid on your own lot.</p>
+        {% endif %}
+
+        {% if 'user_id' in session and session['user_id'] != lot.owner_id %}
+            <form method="POST" class="bid-form">
+                <label for="bid_amount">Your Bid:</label>
+                <input type="number" id="bid_amount" name="bid_amount" step="0.01" min="{{ lot.current_price + 0.01 }}" required>
+                <button type="submit" class="btn-bid">Place Bid</button>
+            </form>
+        {% elif 'user_id' not in session %}
+            <p><a href="{{ url_for('login') }}">Log in</a> to place a bid.</p>
+        {% endif %}
+
+        <h3>Bid History</h3>
+        <ul class="bid-history">
+            {% for bid in lot.bids %}
+                <li>
+                    ${{ bid.amount }} by {{ bid.user.username }} at {{ bid.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('index') }}" class="btn-back">Back to Home</a>
+    </div>
+{% endblock %}

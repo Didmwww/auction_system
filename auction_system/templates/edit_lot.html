@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="auth-container">
+        <h2>Edit Lot</h2>
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ lot.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required>{{ lot.description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="start_price">Start Price:</label>
+                <input type="number" id="start_price" name="start_price" step="0.01" value="{{ lot.start_price }}" {% if lot.bids %}disabled{% endif %} required>
+            </div>
+            <button type="submit" class="btn-auth">Save Changes</button>
+        </form>
+        <p class="auth-link"><a href="{{ url_for('lot', lot_id=lot.id) }}">Back to Lot</a></p>
+    </div>
+{% endblock %}

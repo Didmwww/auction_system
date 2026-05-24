@@ -1,0 +1,74 @@
+@startuml AuctionSystem
+
+class User {
+  + id: Integer
+  + username: String
+  + email: String
+  --
+  + register()
+  + login()
+  + logout()
+}
+
+class Lot {
+  + id: Integer
+  + current_price: Float
+  + is_active: Boolean
+  --
+  + create()
+  + publish()
+  + close()
+  + edit()
+}
+
+class Bid {
+  + amount: Float
+  --
+  + place()
+  + validate()
+}
+
+package "Lot Management" {
+  User --> Lot : "Creates"
+  User --> Lot : "Publishes (/start_auction)"
+  User --> Lot : "Closes (/close_lot)"
+  User --> Lot : "Edits (if no bids)"
+}
+
+package "Bidding Mechanism" {
+  User --> Bid : "Makes bid (/lot)"
+  Bid --> Lot : "Updates current_price"
+  Bid --> AuctionTimer : "Triggers timer"
+}
+
+package "Auction Timer" {
+  class AuctionTimer {
+    + check_winner()
+  }
+  AuctionTimer --> Lot : "Closes lot after 120s"
+  AuctionTimer --> Lot : "Records winner"
+}
+
+
+note top of Bid
+  **Bid Validation:**
+  1. Only authenticated users
+  2. Bid > current_price
+  3. Not lot owner
+  4. Lot active and published
+end note
+
+note right of Lot
+  **Lot States:**
+  1. Draft (not published)
+  2. Active (auction running)
+  3. Completed (closed)
+end note
+
+
+User "1" -- "many" Lot : "Owns"
+User "1" -- "many" Bid : "Makes"
+Lot "1" -- "many" Bid : "Contains"
+AuctionTimer "1" -- "1" Lot : "Controls"
+
+@enduml
